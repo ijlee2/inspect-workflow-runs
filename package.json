@@ -1,0 +1,19 @@
+{
+  "name": "inspect-workflow-runs",
+  "version": "0.0.0",
+  "description": "Inspect the runs of a GitHub Actions workflow",
+  "main": "index.js",
+  "repository": "git@github.com:ijlee2/inspect-workflow-runs.git",
+  "author": "ijlee2 <ijlee2@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "babel-node index.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.11.4",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
+    "@octokit/rest": "^18.0.3",
+    "dotenv": "^8.2.0"
+  }
+}
