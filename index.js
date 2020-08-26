@@ -1,18 +1,18 @@
 import readEnvironmentVariables from './lib/dotenv';
-import GitHub from './lib/github';
+import Workflow from './utils/workflow';
 
 
 async function main() {
   try {
     readEnvironmentVariables();
 
-    const client = new GitHub({
+    const workflow = new Workflow({
       repoOwner: 'ijlee2',
       repoName: 'ember-container-query',
       workflowFileName: 'ci.yml'
     });
 
-    console.log(client.repoName);
+    await workflow.analyzeSuccessfulRuns();
 
   } catch(error) {
     console.error(error);
