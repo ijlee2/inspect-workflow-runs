@@ -12,6 +12,20 @@ export default class Workflow {
 
 
   async analyzeSuccessfulRuns() {
-    console.log(this.client.repoName);
+    let runs = await this._getSuccessfulRuns();
+
+    this._analyzeRuntime(runs);
+  }
+
+
+  async _getSuccessfulRuns() {
+    const { runs } = await this.client.findWorkflowRuns();
+
+    return runs.filter(({ conclusion }) => conclusion === 'success');
+  }
+
+
+  _analyzeRuntime(runs) {
+    console.log(runs);
   }
 }
