@@ -13,6 +13,7 @@ export default class Workflow {
 
   async analyzeSuccessfulRuns() {
     let runs = await this._getSuccessfulRuns();
+    runs = await this._appendRunDuration(runs);
 
     this._analyzeRuntime(runs);
   }
@@ -25,7 +26,41 @@ export default class Workflow {
   }
 
 
+  async _appendRunDuration(runs) {
+    const mapRunIdToRun = convertArrayToMap(runs);
+    const runIds = Array.from(mapRunIdToRun.keys());
+
+    const results = await Promise.allSettled(
+      runIds.map(runId => {
+        return this.client.findWorkflowRuntime(runId);
+      })
+    );
+
+    results.forEach(({ status, value }) => {
+      if (status !== 'fulfilled') {
+        // Discard bad data
+        mapRunIdToRun.delete(id);
+        return;
+      }
+
+      const { id, durationInSeconds } = value;
+      let run = mapRunIdToRun.get(id);
+
+      run.durationInSeconds = durationInSeconds;
+    });
+
+    return Array.from(mapRunIdToRun.values());
+  }
+
+
   _analyzeRuntime(runs) {
     console.log(runs);
   }
 }
+
+
+function convertArrayToMap(runs) {
+  const kvArray = runs.map(run => [run.id, run]);
+
+  return new Map(kvArray);
+};
