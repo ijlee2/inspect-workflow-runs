@@ -1,4 +1,5 @@
 import GitHub from '../lib/github';
+import { getMean, getStandardDeviation } from './math';
 
 
 export default class Workflow {
@@ -54,7 +55,19 @@ export default class Workflow {
 
 
   _analyzeRuntime(runs) {
-    console.log(runs);
+    const runtimes = runs.map(({ durationInSeconds }) => durationInSeconds);
+
+    const mean = getMean(runtimes);
+    const standardDeviation = getStandardDeviation(runtimes);
+    const n = runtimes.length;
+
+    const recommendedTimeoutInMinutes = Math.ceil((mean + 2 * standardDeviation) / 60);
+
+    console.log(`\nOver the last ${n} successful runs, the workflow took the following time to run (in seconds):\n`);
+    console.log(`  Mean: ${mean.toFixed(2)}`);
+    console.log(`  Standard Deviation: ${standardDeviation.toFixed(2)}`);
+
+    console.log(`\nBased on these numbers, please consider setting each job\'s \`timeout-minutes\` to \`${recommendedTimeoutInMinutes}\`.\n`);
   }
 }
 
