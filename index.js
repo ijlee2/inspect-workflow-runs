@@ -1,5 +1,5 @@
-import readEnvironmentVariables from './lib/dotenv';
-import Workflow from './utils/workflow';
+import readEnvironmentVariables from './src/lib/dotenv';
+import Workflow from './src/utils/workflow';
 
 
 async function main() {
