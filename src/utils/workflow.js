@@ -16,7 +16,8 @@ export default class Workflow {
     let runs = await this._getSuccessfulRuns();
     runs = await this._appendRunDuration(runs);
 
-    this._analyzeRuntime(runs);
+    const results = this._analyzeRuntime(runs);
+    this._displayResults(results);
   }
 
 
@@ -56,14 +57,30 @@ export default class Workflow {
 
   _analyzeRuntime(runs) {
     const runtimes = runs.map(({ durationInSeconds }) => durationInSeconds);
+    const sampleSize = runtimes.length;
 
     const mean = getMean(runtimes);
     const standardDeviation = getStandardDeviation(runtimes);
-    const n = runtimes.length;
-
     const recommendedTimeoutInMinutes = Math.ceil((mean + 2 * standardDeviation) / 60);
 
-    console.log(`\nOver the last ${n} successful runs, the workflow took the following time to run (in seconds):\n`);
+    return {
+      mean,
+      recommendedTimeoutInMinutes,
+      sampleSize,
+      standardDeviation,
+    };
+  }
+
+
+  _displayResults(results) {
+    const {
+      mean,
+      recommendedTimeoutInMinutes,
+      sampleSize,
+      standardDeviation,
+    } = results;
+
+    console.log(`\nOver the last ${sampleSize} successful runs, the workflow took the following time to run (in seconds):\n`);
     console.log(`  Mean: ${mean.toFixed(2)}`);
     console.log(`  Standard Deviation: ${standardDeviation.toFixed(2)}`);
 

@@ -132,4 +132,56 @@ describe('utils/workflow', function() {
       scope_138723945.done();
     });
   });
+
+
+  describe('Workflow._analyzeRuntime()', function() {
+    it('recommends timeout-minutes based on 95% confidence interval', async function() {
+      const runs = [
+        {
+          id: 138926310,
+          number: 5,
+          conclusion: 'success',
+          durationInSeconds: 273,
+        },
+        {
+          id: 138723945,
+          number: 2,
+          conclusion: 'success',
+          durationInSeconds: 258,
+        },
+      ];
+
+      const {
+        mean,
+        recommendedTimeoutInMinutes,
+        sampleSize,
+        standardDeviation,
+      } = await this.workflow._analyzeRuntime(runs);
+
+      assert.equal(
+        mean,
+        265.5,
+        'We get the correct mean.'
+      );
+
+      assert.equal(
+        recommendedTimeoutInMinutes,
+        5,
+        'We get the correct recommended timeout in minutes.'
+      );
+
+      assert.equal(
+        sampleSize,
+        2,
+        'We get the correct sample size.'
+      );
+
+      assert.approximately(
+        standardDeviation,
+        Math.sqrt(2/1 * 56.25),
+        0.001,
+        'We get the correct standard deviation.'
+      );
+    });
+  });
 });
